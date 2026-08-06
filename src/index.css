@@ -1,0 +1,299 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   TechGrandHub design tokens
+   Editorial technology: near black canvas, warm white type, cobalt accent,
+   soft silver detail. Edit the values here to restyle the whole website.
+   ========================================================================== */
+
+@theme {
+  /* Surfaces */
+  --color-ink: #08090b;
+  --color-ink-raised: #0e1014;
+  --color-ink-deep: #050608;
+
+  /* Type */
+  --color-bone: #f4f1eb;
+  --color-bone-soft: #cfcbc3;
+  --color-silver: #949cab;
+  --color-silver-dim: #6b7280;
+
+  /* Accent */
+  --color-cobalt: #2f5bff;
+  --color-cobalt-bright: #4d76ff;
+  --color-cobalt-soft: #8ea6ff;
+  --color-cobalt-deep: #17307f;
+
+  /* Feedback */
+  --color-signal: #59d1a6;
+  --color-alert: #ff6b5e;
+
+  /* Hairlines */
+  --color-line: rgba(244, 241, 235, 0.1);
+  --color-line-strong: rgba(244, 241, 235, 0.2);
+
+  /* Typography */
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-editorial: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Layout */
+  --shell-max: 88rem;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* A very quiet blueprint grid. It reads as engineering paper, not as decoration. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(244, 241, 235, 0.028) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(244, 241, 235, 0.028) 1px, transparent 1px);
+    background-size: 7.5rem 7.5rem;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 10%, transparent 75%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+    letter-spacing: -0.035em;
+    font-weight: 500;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-cobalt);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-cobalt-soft);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Native controls inherit the dark canvas. */
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  select option {
+    background-color: #0e1014;
+    color: #f4f1eb;
+  }
+
+  input:-webkit-autofill,
+  textarea:-webkit-autofill {
+    -webkit-text-fill-color: var(--color-bone);
+    transition: background-color 100000s ease-in-out 0s;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-ink-deep);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #23262d;
+    border-radius: 999px;
+    border: 3px solid var(--color-ink-deep);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #33373f;
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@layer utilities {
+  .shell {
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 4rem;
+    }
+  }
+
+  /* Section rhythm. Generous, editorial, consistent. */
+  .section-space {
+    padding-block: 6rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-space {
+      padding-block: 8.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .section-space {
+      padding-block: 11rem;
+    }
+  }
+
+  .font-editorial {
+    font-family: var(--font-editorial);
+    letter-spacing: -0.01em;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Small uppercase eyebrow used above every section title. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-silver);
+  }
+
+  /* Fluid editorial display type. */
+  .display-xl {
+    font-size: clamp(2.5rem, 5.4vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  .display-lg {
+    font-size: clamp(2rem, 3.9vw, 3.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  }
+
+  .display-md {
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+  }
+
+  /* Restrained glass. Used sparingly, never as a default card style. */
+  .glass-soft {
+    background: linear-gradient(
+      180deg,
+      rgba(244, 241, 235, 0.045),
+      rgba(244, 241, 235, 0.012)
+    );
+    backdrop-filter: blur(18px) saturate(130%);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+    border: 1px solid var(--color-line);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Masked line reveal wrapper used by the split text component. */
+  .line-mask {
+    overflow: hidden;
+    padding-block: 0.08em;
+    margin-block: -0.08em;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Skip link, visible only on keyboard focus. */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 200;
+    transform: translateY(-160%);
+    transition: transform 0.25s var(--ease-out-expo);
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Custom cursor
+   ========================================================================== */
+
+.cursor-hidden,
+.cursor-hidden * {
+  cursor: none !important;
+}
+
+/* ==========================================================================
+   Reduced motion. Everything still arrives, it simply arrives calmly.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

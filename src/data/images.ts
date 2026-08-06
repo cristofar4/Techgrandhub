@@ -1,0 +1,203 @@
+/**
+ * Central image registry for TechGrandHub.
+ *
+ * Every photograph used on the website is declared once, in this file.
+ * Each entry carries the remote source, the file name to use if you download
+ * the photograph into public/images, the alternative text, and the aspect
+ * ratio (used to reserve space so the layout never shifts while loading).
+ *
+ * HOW TO SWITCH TO LOCAL IMAGES
+ * 1. Download every photograph listed in public/images/README.md.
+ * 2. Save each one with the exact file name shown in the `local` field below,
+ *    inside the public/images folder.
+ * 3. Set USE_LOCAL_IMAGES to true. Nothing else needs to change.
+ */
+
+export const USE_LOCAL_IMAGES = false;
+
+const REMOTE_HOST = "https://images.unsplash.com/";
+
+export interface ImageAsset {
+  /** Remote photo identifier. Also forms the download address. */
+  id: string;
+  /** File name to use inside public/images when hosting the file yourself. */
+  local: string;
+  /** Descriptive alternative text, read by screen readers. */
+  alt: string;
+  /** Width divided by height. Used to reserve layout space. */
+  ratio: number;
+}
+
+/** Widths generated for responsive loading. */
+export const IMAGE_WIDTHS = [480, 768, 1080, 1440, 1920] as const;
+
+/** Build a single source address at a given width. */
+export function imageSrc(asset: ImageAsset, width = 1080): string {
+  if (USE_LOCAL_IMAGES) return `/images/${asset.local}`;
+  return `${REMOTE_HOST}${asset.id}?auto=format&fit=crop&w=${width}&q=72`;
+}
+
+/** Build a responsive source set so browsers download only what they need. */
+export function imageSrcSet(asset: ImageAsset): string | undefined {
+  if (USE_LOCAL_IMAGES) return undefined;
+  return IMAGE_WIDTHS.map((w) => `${imageSrc(asset, w)} ${w}w`).join(", ");
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+export const heroPrimary: ImageAsset = {
+  id: "photo-1498050108023-c5249f4df085",
+  local: "hero-primary.jpg",
+  alt: "A web developer workspace with a laptop displaying source code beside a notebook",
+  ratio: 4 / 5,
+};
+
+/** Second visual layer revealed by the moving glass lens. */
+export const heroLens: ImageAsset = {
+  id: "photo-1551288049-bebda4e38f71",
+  local: "hero-lens.jpg",
+  alt: "A finished website interface with charts and navigation shown on a laptop screen",
+  ratio: 4 / 5,
+};
+
+/* --------------------------------------------------------------------------
+   About
+   -------------------------------------------------------------------------- */
+
+export const aboutPortrait: ImageAsset = {
+  id: "photo-1507003211169-0a1dd7228f2d",
+  local: "about-portrait.jpg",
+  alt: "Professional portrait of the developer behind TechGrandHub",
+  ratio: 4 / 5,
+};
+
+export const aboutDetail: ImageAsset = {
+  id: "photo-1461749280684-dccba630e2f6",
+  local: "about-detail.jpg",
+  alt: "A close view of a monitor showing structured frontend code",
+  ratio: 3 / 2,
+};
+
+/* --------------------------------------------------------------------------
+   Services
+   -------------------------------------------------------------------------- */
+
+export const serviceImages: Record<string, ImageAsset> = {
+  business: {
+    id: "photo-1497366754035-f200968a6e72",
+    local: "service-business.jpg",
+    alt: "A modern business office interior with meeting spaces and natural light",
+    ratio: 3 / 2,
+  },
+  portfolio: {
+    id: "photo-1487017159836-4e23ece2e4cf",
+    local: "service-portfolio.jpg",
+    alt: "A creative desk with a laptop, sketches, and design tools arranged neatly",
+    ratio: 3 / 2,
+  },
+  school: {
+    id: "photo-1503676260728-1c00da094a0b",
+    local: "service-school.jpg",
+    alt: "Students studying together with laptops and books in a bright classroom",
+    ratio: 3 / 2,
+  },
+  landing: {
+    id: "photo-1460925895917-afdab827c52f",
+    local: "service-landing.jpg",
+    alt: "A laptop screen showing a campaign performance dashboard",
+    ratio: 3 / 2,
+  },
+  redesign: {
+    id: "photo-1454165804606-c3d57bc86b40",
+    local: "service-redesign.jpg",
+    alt: "A business team reviewing printed performance reports around a table",
+    ratio: 3 / 2,
+  },
+  frontend: {
+    id: "photo-1555066931-4365d14bab8c",
+    local: "service-frontend.jpg",
+    alt: "A developer screen filled with interface code in a dark editor",
+    ratio: 3 / 2,
+  },
+};
+
+/* --------------------------------------------------------------------------
+   Projects
+   -------------------------------------------------------------------------- */
+
+export const projectImages: Record<string, ImageAsset> = {
+  atelier: {
+    id: "photo-1441986300917-64674bd600d8",
+    local: "project-fashion.jpg",
+    alt: "A styled fashion retail interior with clothing displayed on rails",
+    ratio: 3 / 2,
+  },
+  academy: {
+    id: "photo-1509062522246-3755977927d7",
+    local: "project-school.jpg",
+    alt: "A classroom of students working at desks during a lesson",
+    ratio: 3 / 2,
+  },
+  clinic: {
+    id: "photo-1519494026892-80bbd2d6fd0d",
+    local: "project-hospital.jpg",
+    alt: "A calm hospital corridor with clear signage and soft daylight",
+    ratio: 3 / 2,
+  },
+  platform: {
+    id: "photo-1451187580459-43490279c0fa",
+    local: "project-technology.jpg",
+    alt: "A visualisation of connected technology networks across a globe",
+    ratio: 3 / 2,
+  },
+  ledger: {
+    id: "photo-1522071820081-009f0129c71c",
+    local: "project-landing.jpg",
+    alt: "A business team collaborating around laptops in a bright studio",
+    ratio: 3 / 2,
+  },
+  studio: {
+    id: "photo-1486312338219-ce68d2c6f44d",
+    local: "project-portfolio.jpg",
+    alt: "A creative professional working on a laptop at a minimal desk",
+    ratio: 3 / 2,
+  },
+};
+
+/* --------------------------------------------------------------------------
+   Testimonials
+   -------------------------------------------------------------------------- */
+
+export const testimonialImages: Record<string, ImageAsset> = {
+  one: {
+    id: "photo-1494790108377-be9c29b29330",
+    local: "client-one.jpg",
+    alt: "Portrait of a business owner smiling in a bright interior",
+    ratio: 1,
+  },
+  two: {
+    id: "photo-1472099645785-5658abf4ff4e",
+    local: "client-two.jpg",
+    alt: "Portrait of a company director in a dark jacket",
+    ratio: 1,
+  },
+  three: {
+    id: "photo-1573496359142-b8d87734a5a2",
+    local: "client-three.jpg",
+    alt: "Portrait of a school administrator standing in an office",
+    ratio: 1,
+  },
+};
+
+/** Every asset in one list, used by the download guide and by preloading. */
+export const allImageAssets: ImageAsset[] = [
+  heroPrimary,
+  heroLens,
+  aboutPortrait,
+  aboutDetail,
+  ...Object.values(serviceImages),
+  ...Object.values(projectImages),
+  ...Object.values(testimonialImages),
+];
