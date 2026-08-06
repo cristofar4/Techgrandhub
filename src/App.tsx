@@ -12,6 +12,7 @@ import { Services } from "@/components/sections/Services";
 import { Projects } from "@/components/sections/Projects";
 import { Process } from "@/components/sections/Process";
 import { Technologies } from "@/components/sections/Technologies";
+import { Playground } from "@/components/sections/Playground";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Contact } from "@/components/sections/Contact";
 
@@ -61,6 +62,7 @@ export default function App() {
           <Projects />
           <Process />
           <Technologies />
+          <Playground />
           <Testimonials />
           <Contact />
         </main>

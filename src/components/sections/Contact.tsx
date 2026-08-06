@@ -10,23 +10,27 @@ import { Button, ArrowIcon } from "@/components/ui/Button";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/Field";
 
 /* ==========================================================================
-   CONNECT YOUR FORM SERVICE HERE
+   FORMSPREE
    --------------------------------------------------------------------------
-   Set VITE_FORM_ENDPOINT in your .env file and the form posts to it as JSON.
-   Working examples:
+   The form posts to Formspree. To switch it on:
 
-     Formspree    VITE_FORM_ENDPOINT=https://formspree.io/f/YOUR_FORM_ID
-     Web3Forms    VITE_FORM_ENDPOINT=https://api.web3forms.com/submit
-                  (also set VITE_WEB3FORMS_KEY with your access key)
-     Custom API   VITE_FORM_ENDPOINT=https://api.yourdomain.com/enquiries
+   1. Create a free account at https://formspree.io and add a new form.
+   2. Formspree gives you an address like https://formspree.io/f/abcdwxyz
+      The last part, abcdwxyz, is your form id.
+   3. Put it in a file named .env in the project root:
 
-   For EmailJS, replace the body of `sendEnquiry` below with an emailjs.send
-   call. Everything else, including the loading, success, and error states,
-   keeps working without any further change.
+        VITE_FORMSPREE_ID=abcdwxyz
+
+   4. On Vercel or Netlify, add the same name and value under the site
+      environment variables, then redeploy.
+   5. Send a test message. The first one arrives with a confirmation link
+      from Formspree, which you have to click once before delivery starts.
+
+   Until the id is set the form still validates and still shows every state,
+   and the enquiry is written to the browser console so you can check it.
    ========================================================================== */
 
-const FORM_ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT ?? "";
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY ?? "";
+const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID ?? "";
 
 interface EnquiryPayload {
   fullName: string;
@@ -37,28 +41,49 @@ interface EnquiryPayload {
   details: string;
 }
 
+/** Formspree replies with this shape when it rejects a submission. */
+interface FormspreeError {
+  errors?: Array<{ message?: string; field?: string }>;
+}
+
 async function sendEnquiry(payload: EnquiryPayload): Promise<void> {
-  // No service connected yet: the enquiry is logged so you can confirm the
-  // form works, then the success state is shown.
-  if (!FORM_ENDPOINT) {
-    console.info("Contact enquiry ready to send:", payload);
+  if (!FORMSPREE_ID) {
+    console.info(
+      "No Formspree id set. Add VITE_FORMSPREE_ID to your .env file. Enquiry was:",
+      payload,
+    );
     await new Promise((resolve) => setTimeout(resolve, 900));
     return;
   }
 
-  const body = WEB3FORMS_KEY
-    ? { access_key: WEB3FORMS_KEY, subject: `New enquiry from ${payload.fullName}`, ...payload }
-    : payload;
-
-  const response = await fetch(FORM_ENDPOINT, {
+  const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      name: payload.fullName,
+      email: payload.email,
+      business: payload.business || "Not given",
+      projectType: payload.projectType,
+      budget: payload.budget || "Not given",
+      message: payload.details,
+      // Shown as the subject line in the notification email.
+      _subject: `New website enquiry from ${payload.fullName}`,
+      // Replying to the notification replies to the sender.
+      _replyto: payload.email,
+    }),
   });
 
-  if (!response.ok) {
-    throw new Error(`The form service replied with status ${response.status}.`);
-  }
+  if (response.ok) return;
+
+  // Formspree explains refusals in the body, so pass that on rather than a code.
+  const body: FormspreeError = await response.json().catch(() => ({}));
+  const detail = body.errors?.map((item) => item.message).filter(Boolean).join(". ");
+
+  throw new Error(
+    detail && detail.length > 0
+      ? detail
+      : `The message could not be delivered, status ${response.status}.`,
+  );
 }
 
 type FormState = "idle" | "sending" | "success" | "error";
@@ -184,7 +209,7 @@ export function Contact() {
       <div className="shell relative z-10">
         <SectionHeading
           eyebrow="Contact"
-          marker="07"
+          marker="08"
           headingId="contact-title"
           title="Let us build something"
           titleAccent="people will remember."

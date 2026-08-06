@@ -1,77 +1,129 @@
-# Image list
+# Images
 
-Every photograph on the website is declared in `src/data/images.ts`. Out of the
-box the site loads them from the Unsplash image service, so it works with no
-extra steps. Hosting the files yourself is faster and removes the dependency on
-an outside service, and this page tells you exactly what to download and where
-to put it.
+There are two kinds of picture on this website, and they are handled
+differently.
 
-## How to host the images yourself
+1. **Project screenshots.** Pictures of your own live websites. These are
+   captured automatically. See part one below.
+2. **People and places.** The hero, the About section, and the client
+   portraits. These come from a photo service by default, and part two shows
+   how to replace them with Nigerian photography.
 
-1. Download each photograph in the table below.
-2. Save it into this folder (`public/images/`) using the exact file name shown.
-3. Open `src/data/images.ts` and set `USE_LOCAL_IMAGES` to `true`.
-4. Restart the development server.
+---
 
-Nothing else needs to change. The alternative text, the reserved space, and the
-lazy loading all keep working.
+## Part one: project screenshots, captured automatically
 
-## Recommended export settings
+The seven project images are screenshots of your live websites, taken straight
+from their real addresses. Run this once on your own computer:
+
+```bash
+npm install --no-save playwright
+npx playwright install chromium
+npm run capture
+```
+
+The screenshots land in `public/images/projects/` as `forge.jpg`,
+`horizon.jpg`, `ocmedical.jpg`, `cabello.jpg`, `specdec.jpg`, `lcci.jpg`, and
+`duryplaza.jpg`. Commit them, and they appear on the website.
+
+Playwright is deliberately not a dependency of this project, so it never slows
+a deployment down. The first two commands are needed only on the machine where
+you take the screenshots, and only once.
+
+### If a capture fails
+
+Free hosting on Render sleeps when nobody visits, and the first request has to
+wake it up, which can take almost a minute. If a site times out, open its
+address in your browser, wait for it to load, then run `npm run capture` again.
+
+### Before the screenshots exist
+
+Any project without a screenshot shows a small browser frame with the project
+name inside it. Nothing looks broken, so you can deploy first and capture
+later.
+
+### Adding a new project
+
+Add it in three places:
+
+1. `src/data/images.ts`, inside `projectImages`
+2. `src/data/projects.ts`, in the `projects` list
+3. `scripts/capture-projects.mjs`, in the `TARGETS` list
+
+Use the same short id in all three, then run `npm run capture` again.
+
+---
+
+## Part two: replacing the people and places with Nigerian photography
+
+The remaining seven pictures currently load from Unsplash. Replacing them with
+Nigerian photography is a much stronger fit for the brand, and it takes about
+ten minutes.
+
+### Step one, download seven pictures
+
+These searches return free Nigerian and West African photography. Pick one
+picture for each row, and save it with the exact file name given.
+
+| Save it as | What to look for | Where to search |
+| --- | --- | --- |
+| `hero-primary.jpg` | A developer at work, or a modern workspace | https://unsplash.com/s/photos/nigerian-developer |
+| `hero-lens.jpg` | A website or dashboard on a screen, matching the hero crop | https://unsplash.com/s/photos/website-design-screen |
+| `about-portrait.jpg` | Your own portrait, or a Nigerian professional portrait | https://unsplash.com/s/photos/nigerian-man-portrait |
+| `about-detail.jpg` | Code on a screen, or a working desk | https://unsplash.com/s/photos/code-screen |
+| `client-one.jpg` | A Nigerian business owner, portrait | https://unsplash.com/s/photos/nigerian-woman-professional |
+| `client-two.jpg` | A Nigerian company director, portrait | https://unsplash.com/s/photos/nigerian-businessman |
+| `client-three.jpg` | A Nigerian school administrator, portrait | https://unsplash.com/s/photos/african-professional-woman |
+
+Pexels has good Nigerian photography too: https://www.pexels.com/search/nigeria/
+
+The strongest choice of all for `about-portrait.jpg` is a real photograph of
+you. A portfolio with the real person on it is trusted more than one with a
+stock portrait, every time.
+
+### Step two, save them here
+
+Put all seven files directly into this folder, `public/images/`.
+
+### Step three, switch them on
+
+Open `src/data/images.ts` and change one line:
+
+```ts
+export const USE_LOCAL_IMAGES = true;
+```
+
+Restart the development server. That is the whole change. The project
+screenshots are unaffected, because they always load from your own files.
+
+### Step four, fix the alternative text
+
+Alternative text describes what a picture actually shows, so screen readers
+and search engines get the truth. Once you have swapped a picture, update its
+`alt` line in `src/data/images.ts` to describe the new one.
+
+### Export settings
 
 | Use | Longest edge | Format | Quality |
 | --- | --- | --- | --- |
-| Hero and project images | 1600 px | JPG or WebP | 72 to 80 |
-| Service images | 1200 px | JPG or WebP | 72 |
+| Hero | 1600 px | JPG or WebP | 72 to 80 |
+| About | 1200 px | JPG or WebP | 72 |
 | Portraits | 900 px | JPG or WebP | 75 |
 | Social sharing image | 1200 x 630 px | JPG | 80 |
 
-Keep every file under 300 KB. Anything larger will slow the first view down.
+Keep every file under 300 KB. Anything larger slows the first view down.
 
-## The list
-
-Each source address below opens the photograph on Unsplash, where you can
-download the full size file. All of them are free to use under the Unsplash
-licence. You are free to replace any of them with your own photography, which
-is always the stronger choice for a portfolio.
-
-| File name to save | Used for | Source |
-| --- | --- | --- |
-| `hero-primary.jpg` | Hero photograph, a developer workspace | https://unsplash.com/photos/photo-1498050108023-c5249f4df085 |
-| `hero-lens.jpg` | Second layer revealed by the hero lens, a website interface | https://unsplash.com/photos/photo-1551288049-bebda4e38f71 |
-| `about-portrait.jpg` | About section portrait | https://unsplash.com/photos/photo-1507003211169-0a1dd7228f2d |
-| `about-detail.jpg` | About section detail, code on screen | https://unsplash.com/photos/photo-1461749280684-dccba630e2f6 |
-| `service-business.jpg` | Business Websites | https://unsplash.com/photos/photo-1497366754035-f200968a6e72 |
-| `service-portfolio.jpg` | Portfolio Websites | https://unsplash.com/photos/photo-1487017159836-4e23ece2e4cf |
-| `service-school.jpg` | School Websites | https://unsplash.com/photos/photo-1503676260728-1c00da094a0b |
-| `service-landing.jpg` | Landing Pages | https://unsplash.com/photos/photo-1460925895917-afdab827c52f |
-| `service-redesign.jpg` | Website Redesign | https://unsplash.com/photos/photo-1454165804606-c3d57bc86b40 |
-| `service-frontend.jpg` | Frontend Development | https://unsplash.com/photos/photo-1555066931-4365d14bab8c |
-| `project-fashion.jpg` | Project, Atelier Nova | https://unsplash.com/photos/photo-1441986300917-64674bd600d8 |
-| `project-school.jpg` | Project, Northgate Academy | https://unsplash.com/photos/photo-1509062522246-3755977927d7 |
-| `project-hospital.jpg` | Project, Meridian Health | https://unsplash.com/photos/photo-1519494026892-80bbd2d6fd0d |
-| `project-technology.jpg` | Project, Orbit Systems | https://unsplash.com/photos/photo-1451187580459-43490279c0fa |
-| `project-landing.jpg` | Project, Ledger Partners | https://unsplash.com/photos/photo-1522071820081-009f0129c71c |
-| `project-portfolio.jpg` | Project, Ayo Studio | https://unsplash.com/photos/photo-1486312338219-ce68d2c6f44d |
-| `client-one.jpg` | Testimonial portrait, first client | https://unsplash.com/photos/photo-1494790108377-be9c29b29330 |
-| `client-two.jpg` | Testimonial portrait, second client | https://unsplash.com/photos/photo-1472099645785-5658abf4ff4e |
-| `client-three.jpg` | Testimonial portrait, third client | https://unsplash.com/photos/photo-1573496359142-b8d87734a5a2 |
+---
 
 ## Two files this folder still needs
 
-These are referenced by `index.html` and are not created for you, because they
+These are named in `index.html` and are not created for you, because they
 should carry your own branding.
 
 | File name | Size | Purpose |
 | --- | --- | --- |
-| `og-cover.jpg` | 1200 x 630 px | The picture shown when the website is shared on social platforms |
-| `apple-touch-icon.png` | 180 x 180 px | The icon used when the website is saved to a phone home screen |
+| `og-cover.jpg` | 1200 x 630 px | The picture shown when the website is shared |
+| `apple-touch-icon.png` | 180 x 180 px | The icon used when the website is saved to a phone |
 
 Until you add them the website still works. Only the sharing preview and the
 saved icon are affected.
-
-## If a photograph does not appear
-
-The website shows a quiet blueprint panel in place of any image that fails to
-load, so a missing file never breaks the layout. If you see that panel, either
-the file name does not match the table above, or `USE_LOCAL_IMAGES` is still set
-to `false` while the file is only stored locally.

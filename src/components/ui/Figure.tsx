@@ -16,13 +16,18 @@ interface FigureProps {
   ratio?: number;
   /** Width requested from the image service for the default source. */
   width?: number;
+  /** Shown inside the stand in when the picture is not there yet. */
+  fallbackLabel?: string;
   onLoad?: () => void;
 }
 
 /**
  * Every photograph on the website goes through this component, which keeps
  * loading behaviour, responsive sources, alternative text, reserved space,
- * and the failure state consistent in one place.
+ * and the missing picture state consistent in one place.
+ *
+ * When a picture is unavailable the space is filled by a small browser frame
+ * rather than a broken image, so an empty slot still looks deliberate.
  */
 export function Figure({
   asset,
@@ -32,6 +37,7 @@ export function Figure({
   priority = false,
   ratio,
   width = 1080,
+  fallbackLabel,
   onLoad,
 }: FigureProps) {
   const [failed, setFailed] = useState(false);
@@ -42,7 +48,7 @@ export function Figure({
       className={cn("relative overflow-hidden bg-ink-raised", className)}
       style={{ aspectRatio: ratio ?? asset.ratio }}
     >
-      {/* A quiet blueprint stands in until the photograph arrives. */}
+      {/* A quiet blueprint stands in until the picture arrives. */}
       <div
         aria-hidden="true"
         className={cn(
@@ -57,10 +63,22 @@ export function Figure({
       />
 
       {failed ? (
-        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
-          <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-silver">
-            Image unavailable
-          </span>
+        <div aria-hidden="true" className="absolute inset-0 flex flex-col">
+          {/* Browser chrome, so the empty slot reads as a website in waiting. */}
+          <div className="flex items-center gap-2 border-b border-line px-4 py-3">
+            <span className="h-2 w-2 rounded-full bg-silver-dim/60" />
+            <span className="h-2 w-2 rounded-full bg-silver-dim/40" />
+            <span className="h-2 w-2 rounded-full bg-silver-dim/25" />
+            <span className="ms-3 h-4 flex-1 rounded-full bg-line" />
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
+            <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-cobalt-soft">
+              {fallbackLabel ?? "Preview"}
+            </span>
+            <span className="max-w-[22ch] text-xs leading-relaxed text-silver-dim">
+              {asset.alt}
+            </span>
+          </div>
         </div>
       ) : (
         <img

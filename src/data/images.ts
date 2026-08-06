@@ -26,6 +26,11 @@ export interface ImageAsset {
   alt: string;
   /** Width divided by height. Used to reserve layout space. */
   ratio: number;
+  /**
+   * Always load from public/images, whatever USE_LOCAL_IMAGES says.
+   * Project screenshots use this, because they are your own files.
+   */
+  localOnly?: boolean;
 }
 
 /** Widths generated for responsive loading. */
@@ -33,13 +38,13 @@ export const IMAGE_WIDTHS = [480, 768, 1080, 1440, 1920] as const;
 
 /** Build a single source address at a given width. */
 export function imageSrc(asset: ImageAsset, width = 1080): string {
-  if (USE_LOCAL_IMAGES) return `/images/${asset.local}`;
+  if (asset.localOnly || USE_LOCAL_IMAGES) return `/images/${asset.local}`;
   return `${REMOTE_HOST}${asset.id}?auto=format&fit=crop&w=${width}&q=72`;
 }
 
 /** Build a responsive source set so browsers download only what they need. */
 export function imageSrcSet(asset: ImageAsset): string | undefined {
-  if (USE_LOCAL_IMAGES) return undefined;
+  if (asset.localOnly || USE_LOCAL_IMAGES) return undefined;
   return IMAGE_WIDTHS.map((w) => `${imageSrc(asset, w)} ${w}w`).join(", ");
 }
 
@@ -127,43 +132,25 @@ export const serviceImages: Record<string, ImageAsset> = {
    Projects
    -------------------------------------------------------------------------- */
 
+/**
+ * Screenshots of the live websites.
+ *
+ * These are captured from the real addresses by `npm run capture`, which
+ * writes them into public/images/projects. They are always loaded from your
+ * own files, never from an outside image service.
+ */
+function screenshot(id: string, alt: string): ImageAsset {
+  return { id, local: `projects/${id}.jpg`, alt, ratio: 16 / 10, localOnly: true };
+}
+
 export const projectImages: Record<string, ImageAsset> = {
-  atelier: {
-    id: "photo-1441986300917-64674bd600d8",
-    local: "project-fashion.jpg",
-    alt: "A styled fashion retail interior with clothing displayed on rails",
-    ratio: 3 / 2,
-  },
-  academy: {
-    id: "photo-1509062522246-3755977927d7",
-    local: "project-school.jpg",
-    alt: "A classroom of students working at desks during a lesson",
-    ratio: 3 / 2,
-  },
-  clinic: {
-    id: "photo-1519494026892-80bbd2d6fd0d",
-    local: "project-hospital.jpg",
-    alt: "A calm hospital corridor with clear signage and soft daylight",
-    ratio: 3 / 2,
-  },
-  platform: {
-    id: "photo-1451187580459-43490279c0fa",
-    local: "project-technology.jpg",
-    alt: "A visualisation of connected technology networks across a globe",
-    ratio: 3 / 2,
-  },
-  ledger: {
-    id: "photo-1522071820081-009f0129c71c",
-    local: "project-landing.jpg",
-    alt: "A business team collaborating around laptops in a bright studio",
-    ratio: 3 / 2,
-  },
-  studio: {
-    id: "photo-1486312338219-ce68d2c6f44d",
-    local: "project-portfolio.jpg",
-    alt: "A creative professional working on a laptop at a minimal desk",
-    ratio: 3 / 2,
-  },
+  forge: screenshot("forge", "The Forge website shown in a browser"),
+  horizon: screenshot("horizon", "The Horizon Children Foundation website shown in a browser"),
+  ocmedical: screenshot("ocmedical", "The OC Medical website shown in a browser"),
+  cabello: screenshot("cabello", "The Salon Cabello Lounge website shown in a browser"),
+  specdec: screenshot("specdec", "The Specdec website shown in a browser"),
+  lcci: screenshot("lcci", "The LCCI Center website shown in a browser"),
+  duryplaza: screenshot("duryplaza", "The Dury Plaza Hotel website shown in a browser"),
 };
 
 /* --------------------------------------------------------------------------

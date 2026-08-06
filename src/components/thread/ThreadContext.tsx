@@ -99,7 +99,8 @@ export const THREAD_ORDER = {
   projectsBottom: 44,
   process: 50, // process stages use 50, 51, 52 and so on
   technologies: 60,
-  testimonials: 64,
+  playground: 62,
+  testimonials: 66,
   contactHeading: 70,
   contactAction: 74,
 } as const;

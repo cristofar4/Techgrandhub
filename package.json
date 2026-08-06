@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "capture": "node scripts/capture-projects.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

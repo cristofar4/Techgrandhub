@@ -41,12 +41,15 @@ export interface Service {
   image: ImageAsset;
 }
 
+/** Add a new category here and the filter chips pick it up automatically. */
 export type ProjectCategory =
-  | "Fashion Website"
-  | "School Website"
-  | "Hospital Website"
   | "Technology Platform"
-  | "Business Landing Page"
+  | "Business Website"
+  | "Healthcare Website"
+  | "Nonprofit Website"
+  | "Organisation Website"
+  | "Hospitality Website"
+  | "School Website"
   | "Personal Portfolio";
 
 export interface Project {
@@ -59,10 +62,10 @@ export interface Project {
   detail: string;
   technologies: string[];
   image: ImageAsset;
-  /** Replace with the real live website address. */
+  /** The live website address. */
   liveUrl: string;
-  /** Highlights shown as a short result list in the expanded view. */
-  results: string[];
+  /** What stands out about the build, shown in the expanded view. */
+  highlights: string[];
 }
 
 export interface ProcessStage {

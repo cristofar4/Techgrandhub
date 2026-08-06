@@ -87,7 +87,7 @@ export function Testimonials() {
       <div className="shell relative z-10">
         <SectionHeading
           eyebrow="Client words"
-          marker="06"
+          marker="07"
           headingId="testimonials-title"
           title="What clients say"
           titleAccent="afterwards."

@@ -24,6 +24,7 @@ export const navLinks: NavLink[] = [
   { label: "Services", target: "services" },
   { label: "Projects", target: "projects" },
   { label: "Process", target: "process" },
+  { label: "Playground", target: "playground" },
   { label: "Contact", target: "contact" },
 ];
 

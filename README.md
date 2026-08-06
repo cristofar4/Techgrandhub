@@ -42,6 +42,18 @@ are placed:
 | Technology | Passes the purpose selector, where a second drawn line connects the chosen tools |
 | Contact | Runs into the heading, then into the submit button, and closes a circle around the confirmation message |
 
+### The playground
+
+Between the process and the testimonials there is a section a visitor can
+actually use. Developers get a three pane editor with a live preview, and
+everybody else gets Snake, a memory game, and a reaction timer.
+
+The preview runs inside a frame with the scripts permission and nothing else.
+Without permission for the same origin the browser treats it as a separate
+site, so code typed in there cannot reach this page, its storage, or its
+cookies. Work in progress is kept in local storage on the visitor's own
+device, and nothing is ever uploaded.
+
 On phones the route is simplified: optional waypoints are dropped and the curve
 is pulled towards a narrow rail so it never crosses the reading area. When the
 visitor asks for reduced motion, the thread is simply present and still, and
@@ -65,6 +77,9 @@ techgrandhub/
 ├── .env.example                   Template for the contact form settings
 ├── .gitignore
 ├── README.md
+│
+├── scripts/
+│   └── capture-projects.mjs       Screenshots every live project
 │
 ├── public/
 │   ├── favicon.svg                Favicon placeholder, replace with your mark
@@ -112,6 +127,12 @@ techgrandhub/
         │   ├── Logo.tsx           The brand mark
         │   └── Footer.tsx
         │
+        ├── playground/
+        │   ├── CodeLab.tsx        Editor with a sandboxed live preview
+        │   ├── SnakeGame.tsx
+        │   ├── MemoryGame.tsx
+        │   └── ReactionGame.tsx
+        │
         ├── ui/
         │   ├── Button.tsx         Buttons and links, with magnetic hover
         │   ├── Figure.tsx         Every photograph goes through this
@@ -129,6 +150,7 @@ techgrandhub/
             ├── Projects.tsx
             ├── Process.tsx
             ├── Technologies.tsx
+            ├── Playground.tsx     Code editor and games
             ├── Testimonials.tsx
             └── Contact.tsx
 ```
@@ -155,7 +177,22 @@ npm run build      # type check, then build into dist/
 npm run preview    # serve the built site locally
 npm run lint       # check the code
 npm run typecheck  # types only, no build
+npm run capture    # screenshot every live project, see below
 ```
+
+### Screenshotting the projects
+
+The project images are screenshots of your own live websites. Take them with:
+
+```bash
+npm install --no-save playwright
+npx playwright install chromium
+npm run capture
+```
+
+The images land in `public/images/projects/`. Commit them and they appear on
+the website. Playwright is deliberately not a dependency, so this never slows
+a deployment down. Full detail is in `public/images/README.md`.
 
 The development server is exposed on your network as well, so you can open the
 address it prints on a real phone and test the mobile experience properly.
@@ -226,66 +263,55 @@ and the focus rings.
 
 ## 6. Connecting the contact form
 
-The form validates, shows loading, success, and error states, and traps spam
-before you connect anything. Until an address is configured it logs the enquiry
-to the browser console so you can confirm it works.
+The form posts to **Formspree**. It validates, shows loading, success, and
+error states, and traps spam before you connect anything. Until an id is set
+it writes the enquiry to the browser console so you can confirm it works.
 
-The connection point is marked clearly at the top of
-`src/components/sections/Contact.tsx`, in the `sendEnquiry` function.
+### Switching it on
 
-### Option A: Formspree
+1. Create a free account at https://formspree.io and add a new form.
+2. Formspree gives you an address like `https://formspree.io/f/abcdwxyz`.
+   The last part, `abcdwxyz`, is your form id.
+3. Create a file named `.env` in the project root:
 
-1. Create a form at formspree.io and copy its address.
-2. Create a `.env` file in the project root:
+   ```
+   VITE_FORMSPREE_ID=abcdwxyz
+   ```
 
-```
-VITE_FORM_ENDPOINT=https://formspree.io/f/YOUR_FORM_ID
-```
+4. Add the same name and value to your host:
+   - **Vercel**: Settings, then Environment Variables
+   - **Netlify**: Site configuration, then Environment variables
 
-### Option B: Web3Forms
+   Then redeploy, because the value is read at build time.
+5. Send yourself a test message. **The first submission triggers a
+   confirmation email from Formspree, and you have to click the link in it
+   once before any message is delivered.** This catches most people out.
 
-1. Get an access key at web3forms.com.
-2. In `.env`:
+### What arrives in your inbox
 
-```
-VITE_FORM_ENDPOINT=https://api.web3forms.com/submit
-VITE_WEB3FORMS_KEY=your-access-key
-```
+| Field on the page | Name in the email |
+| --- | --- |
+| Full Name | name |
+| Email Address | email |
+| Business or Brand Name | business |
+| Project Type | projectType |
+| Estimated Budget | budget |
+| Project Details | message |
 
-The access key is added to the request automatically.
+The subject line reads "New website enquiry from" and then the sender name,
+and replying to the notification replies straight to the person who wrote in.
 
-### Option C: Your own backend
+### Notes
 
-Point `VITE_FORM_ENDPOINT` at your own address. The form sends a JSON body:
-
-```json
-{
-  "fullName": "string",
-  "email": "string",
-  "business": "string",
-  "projectType": "string",
-  "budget": "string",
-  "details": "string"
-}
-```
-
-Any response outside the success range shows the error state.
-
-### Option D: EmailJS
-
-Install the package, then replace the body of `sendEnquiry` with your
-`emailjs.send` call. Everything else, including all three states and the
-success animation, keeps working without further change.
-
-```bash
-npm install @emailjs/browser
-```
-
-Remember: any value beginning with `VITE_` is visible in the browser. Never put
-a private key or a password in one. Use a server side endpoint for anything
-that must stay secret.
-
----
+- The free Formspree plan allows 50 submissions each month. The paid plans
+  raise that if the enquiries pick up.
+- `VITE_FORMSPREE_ID` is visible in the built JavaScript, which is normal and
+  safe. A form id is not a secret. Never put a private key in a `VITE_`
+  variable, because they all reach the browser.
+- If Formspree refuses a submission it explains why in its reply, and the form
+  shows that explanation rather than a status code.
+- The form has a hidden field that real people never fill in. Anything that
+  fills it is discarded silently, which stops most automated spam.
 
 ## 7. Deployment
 
@@ -375,6 +401,8 @@ those packages only run at build time.
 - [ ] WhatsApp number is digits only, in full international format
 - [ ] GitHub and LinkedIn addresses open your real profiles
 - [ ] Every project has a working live address
+- [ ] Project screenshots have been captured with `npm run capture`
+- [ ] Project descriptions read the way you would describe the work
 - [ ] Testimonials are real, with permission from the client
 - [ ] Statistics reflect real numbers
 - [ ] No placeholder text remains anywhere
@@ -402,6 +430,11 @@ those packages only run at build time.
 - [ ] Technology chips regroup and the connection is drawn
 - [ ] Testimonials advance in both directions and the counter is correct
 - [ ] The mobile menu assembles, closes, and locks background scrolling
+- [ ] Every project opens its live website in a new tab
+- [ ] The playground editor updates its preview as you type
+- [ ] Snake responds to the arrow keys, and to swipes on a phone
+- [ ] The memory game matches pairs and counts moves
+- [ ] The reaction timer records a time and keeps the best one
 
 ### Form
 
@@ -409,6 +442,7 @@ those packages only run at build time.
 - [ ] An invalid email address is rejected
 - [ ] A short project description is rejected
 - [ ] A valid submission shows the loading state, then the success state
+- [ ] The Formspree confirmation email has been clicked once
 - [ ] The thread completes its circle around the confirmation
 - [ ] A failed request shows the error state with a way to email you instead
 - [ ] The enquiry actually arrives in your inbox

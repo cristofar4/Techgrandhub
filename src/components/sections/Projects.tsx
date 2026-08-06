@@ -9,10 +9,11 @@ import { useGsapEffect } from "@/hooks/useGsapEffect";
 import { useIsTouch, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { THREAD_ORDER, useThreadAnchor } from "@/components/thread/ThreadContext";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Figure } from "@/components/ui/Figure";
 import { ButtonLink, Button, ArrowIcon } from "@/components/ui/Button";
 
 /** Resting size of the floating preview, in pixels. */
-const PREVIEW_WIDTH = 380;
+const PREVIEW_WIDTH = 400;
 const PREVIEW_HEIGHT = 250;
 
 /**
@@ -206,7 +207,7 @@ export function Projects() {
           headingId="projects-title"
           title="Websites built for"
           titleAccent="real outcomes."
-          lead="A selection of recent builds across fashion, education, healthcare, technology, and business."
+          lead="Live websites, each one online right now. Open any title to see the detail, or visit the website itself."
         />
 
         {/* ---------------- Filters ---------------- */}
@@ -245,16 +246,14 @@ export function Projects() {
               <li key={project.id} data-project-row className="border-b border-line">
                 <div className="group flex items-center gap-5 py-6 md:gap-10 md:py-8">
                   {/* Inline thumbnail, used where there is no pointer to follow. */}
-                  <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-line lg:hidden">
-                    <img
-                      src={imageSrc(project.image, 480)}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      onError={(event) => {
-                        event.currentTarget.style.visibility = "hidden";
-                      }}
-                      className="h-full w-full object-cover"
+                  <div className="w-24 shrink-0 lg:hidden">
+                    <Figure
+                      asset={project.image}
+                      ratio={16 / 10}
+                      width={480}
+                      sizes="96px"
+                      fallbackLabel={project.name}
+                      className="rounded-lg border border-line"
                     />
                   </div>
 
@@ -289,6 +288,17 @@ export function Projects() {
                     <span className="text-xs text-silver-dim">
                       {project.technologies.slice(0, 3).join(", ")}
                     </span>
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-cursor="link"
+                      data-cursor-label="Visit"
+                      onClick={(event) => event.stopPropagation()}
+                      className="text-xs text-cobalt-soft underline decoration-line-strong underline-offset-4 transition-colors hover:text-bone"
+                    >
+                      Visit the website
+                    </a>
                   </div>
                 </div>
               </li>
@@ -334,6 +344,9 @@ export function Projects() {
               alt=""
               loading="lazy"
               decoding="async"
+              onError={(event) => {
+                event.currentTarget.style.visibility = "hidden";
+              }}
               className={cn(
                 "absolute inset-0 h-full w-full object-cover transition-opacity duration-500",
                 hovered?.id === project.id ? "opacity-100" : "opacity-0",
@@ -441,15 +454,16 @@ function ProjectDetail({ project, slotRef, closeRef, onClose, showSlotImage }: P
           {/* The floating preview lands exactly here. */}
           <div
             ref={slotRef}
-            className="aspect-3/2 w-full overflow-hidden rounded-2xl border border-line bg-ink-raised"
+            className="aspect-16/10 w-full overflow-hidden rounded-2xl border border-line bg-ink-raised"
           >
             {showSlotImage ? (
-              <img
-                src={imageSrc(project.image, 1440)}
-                srcSet={imageSrcSet(project.image)}
+              <Figure
+                asset={project.image}
+                ratio={16 / 10}
+                width={1600}
                 sizes="(max-width: 1024px) 92vw, 55vw"
-                alt={project.image.alt}
-                className="h-full w-full object-cover"
+                fallbackLabel={project.name}
+                priority
               />
             ) : null}
           </div>
@@ -475,12 +489,12 @@ function ProjectDetail({ project, slotRef, closeRef, onClose, showSlotImage }: P
             </dl>
 
             <div data-detail-fade className="mt-8">
-              <h4 className="eyebrow">What changed</h4>
+              <h4 className="eyebrow">What stands out</h4>
               <ul className="mt-4 grid gap-3">
-                {project.results.map((result) => (
-                  <li key={result} className="flex items-start gap-3 text-sm text-bone-soft">
+                {project.highlights.map((highlight) => (
+                  <li key={highlight} className="flex items-start gap-3 text-sm text-bone-soft">
                     <span aria-hidden="true" className="mt-2 h-px w-4 shrink-0 bg-cobalt" />
-                    {result}
+                    {highlight}
                   </li>
                 ))}
               </ul>
