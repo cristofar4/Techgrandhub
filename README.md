@@ -327,6 +327,36 @@ netlify deploy
 netlify deploy --prod
 ```
 
+### If the deployment fails
+
+**"Command npm exited with 1", or the build fails immediately.**
+
+Work through these in order.
+
+1. **Check which branch is being built.** This is the most common cause.
+   Vercel and Netlify build your production branch, which is usually `main`.
+   If the website lives on a feature branch, the platform is building
+   different code. Either merge the branch into `main`, or change the branch
+   the platform builds: on Vercel under Settings, then Git, then Production
+   Branch. On Netlify under Site configuration, then Build and deploy, then
+   Branches.
+
+2. **Check the Node version.** This project needs Node 20.19 or newer, or
+   Node 22 or newer. Older versions fail with an error mentioning
+   `crypto.hash is not a function`. The version is pinned in `.nvmrc`, in
+   `netlify.toml`, and in the `engines` field of `package.json`. On Vercel you
+   can also set it under Settings, then Build and Deployment, then Node.js
+   Version.
+
+3. **Read the first error, not the last line.** `Command npm exited with 1`
+   is only the summary. Scroll up in the deploy log to the first red line,
+   which names the real problem.
+
+Everything the build itself needs sits in `dependencies` rather than
+`devDependencies`, so the build still works on hosts that install with
+`NODE_ENV` set to `production`. Nothing extra reaches the browser, because
+those packages only run at build time.
+
 ### Before you go live
 
 - Replace `https://techgrandhub.com/` in `index.html` and `public/robots.txt`

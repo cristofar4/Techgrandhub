@@ -3,7 +3,10 @@
   publish = "dist"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
+  # Some setups export NODE_ENV as production, which makes the install step
+  # skip anything the build needs. This keeps the install complete.
+  NODE_ENV = "development"
 
 # Single page application: every address serves the same document.
 [[redirects]]
