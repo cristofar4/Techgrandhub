@@ -7,84 +7,23 @@ import { useGsapEffect } from "@/hooks/useGsapEffect";
 import { THREAD_ORDER, useThreadAnchor } from "@/components/thread/ThreadContext";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button, ArrowIcon } from "@/components/ui/Button";
+import { sendEnquiry, type EnquiryPayload } from "@/lib/enquiry";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/Field";
 
 /* ==========================================================================
-   FORMSPREE
+   WHERE ENQUIRIES GO
    --------------------------------------------------------------------------
-   The form posts to Formspree. To switch it on:
+   The sending itself lives in src/lib/enquiry.ts, which supports Formspree,
+   Web3Forms, and your own server. Pick one by setting a single environment
+   variable, no code change needed:
 
-   1. Create a free account at https://formspree.io and add a new form.
-   2. Formspree gives you an address like https://formspree.io/f/abcdwxyz
-      The last part, abcdwxyz, is your form id.
-   3. Put it in a file named .env in the project root:
+     Formspree        VITE_FORMSPREE_ID=abcdwxyz
+     Web3Forms        VITE_WEB3FORMS_KEY=your-access-key
+     Your own server  VITE_FORM_ENDPOINT=https://api.yourdomain.com/enquiries
 
-        VITE_FORMSPREE_ID=abcdwxyz
-
-   4. On Vercel or Netlify, add the same name and value under the site
-      environment variables, then redeploy.
-   5. Send a test message. The first one arrives with a confirmation link
-      from Formspree, which you have to click once before delivery starts.
-
-   Until the id is set the form still validates and still shows every state,
-   and the enquiry is written to the browser console so you can check it.
+   Set none of them and the form still validates, still shows every state, and
+   writes the enquiry to the browser console so you can check it works.
    ========================================================================== */
-
-const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID ?? "";
-
-interface EnquiryPayload {
-  fullName: string;
-  email: string;
-  business: string;
-  projectType: string;
-  budget: string;
-  details: string;
-}
-
-/** Formspree replies with this shape when it rejects a submission. */
-interface FormspreeError {
-  errors?: Array<{ message?: string; field?: string }>;
-}
-
-async function sendEnquiry(payload: EnquiryPayload): Promise<void> {
-  if (!FORMSPREE_ID) {
-    console.info(
-      "No Formspree id set. Add VITE_FORMSPREE_ID to your .env file. Enquiry was:",
-      payload,
-    );
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    return;
-  }
-
-  const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      name: payload.fullName,
-      email: payload.email,
-      business: payload.business || "Not given",
-      projectType: payload.projectType,
-      budget: payload.budget || "Not given",
-      message: payload.details,
-      // Shown as the subject line in the notification email.
-      _subject: `New website enquiry from ${payload.fullName}`,
-      // Replying to the notification replies to the sender.
-      _replyto: payload.email,
-    }),
-  });
-
-  if (response.ok) return;
-
-  // Formspree explains refusals in the body, so pass that on rather than a code.
-  const body: FormspreeError = await response.json().catch(() => ({}));
-  const detail = body.errors?.map((item) => item.message).filter(Boolean).join(". ");
-
-  throw new Error(
-    detail && detail.length > 0
-      ? detail
-      : `The message could not be delivered, status ${response.status}.`,
-  );
-}
 
 type FormState = "idle" | "sending" | "success" | "error";
 type FieldErrors = Partial<Record<keyof EnquiryPayload, string>>;

@@ -107,6 +107,7 @@ techgrandhub/
     │   └── stats.ts               Statistics and strengths
     │
     ├── lib/
+    │   ├── enquiry.ts             Where contact enquiries are sent
     │   ├── gsap.ts                Single GSAP entry point, plugins registered once
     │   └── utils.ts               Class names, smooth path builder, validation helpers
     │
@@ -263,33 +264,71 @@ and the focus rings.
 
 ## 6. Connecting the contact form
 
-The form posts to **Formspree**. It validates, shows loading, success, and
-error states, and traps spam before you connect anything. Until an id is set
-it writes the enquiry to the browser console so you can confirm it works.
+The form validates, shows loading, success, and error states, and traps spam
+before you connect anything. Until a service is configured it writes the
+enquiry to the browser console so you can confirm it works.
 
-### Switching it on
+Three services are supported. Pick one by setting a single environment
+variable. No code changes, and switching later is a one line edit.
 
-1. Create a free account at https://formspree.io and add a new form.
-2. Formspree gives you an address like `https://formspree.io/f/abcdwxyz`.
-   The last part, `abcdwxyz`, is your form id.
-3. Create a file named `.env` in the project root:
+The sending itself lives in `src/lib/enquiry.ts`.
 
-   ```
-   VITE_FORMSPREE_ID=abcdwxyz
-   ```
+### Option 1: Web3Forms
 
-4. Add the same name and value to your host:
-   - **Vercel**: Settings, then Environment Variables
-   - **Netlify**: Site configuration, then Environment variables
+No account needed. Enter your email address at https://web3forms.com and the
+access key is emailed to you. The free plan has no monthly limit.
 
-   Then redeploy, because the value is read at build time.
-5. Send yourself a test message. **The first submission triggers a
-   confirmation email from Formspree, and you have to click the link in it
-   once before any message is delivered.** This catches most people out.
+```
+VITE_WEB3FORMS_KEY=your-access-key
+```
+
+### Option 2: Formspree
+
+Create a form at https://formspree.io. It gives you an address like
+`https://formspree.io/f/abcdwxyz`, and the last part is your form id.
+
+```
+VITE_FORMSPREE_ID=abcdwxyz
+```
+
+**The step that catches people out:** your first submission triggers a
+confirmation email from Formspree, and you have to click the link in it once
+before any message is delivered.
+
+The free plan allows 50 submissions each month.
+
+### Option 3: your own server
+
+```
+VITE_FORM_ENDPOINT=https://api.yourdomain.com/enquiries
+```
+
+It receives a JSON body. Any response outside the success range shows the
+error state, using the response text as the reason where there is one.
+
+### Which one to pick
+
+| | Web3Forms | Formspree |
+| --- | --- | --- |
+| Account needed | No | Yes |
+| Confirmation step | No | Yes, once |
+| Free monthly limit | None stated | 50 |
+| Setup time | About a minute | About five minutes |
+
+Web3Forms is the quicker path. Formspree gives you a dashboard with a history
+of everything received.
+
+### Setting it on your host
+
+Add the same name and value under your host's environment variables, then
+redeploy, because the value is read at build time.
+
+- **Vercel**: Settings, then Environment Variables
+- **Netlify**: Site configuration, then Environment variables
 
 ### What arrives in your inbox
 
-| Field on the page | Name in the email |
+| Field on the page | Name in the message |
 | --- | --- |
 | Full Name | name |
 | Email Address | email |
@@ -298,18 +337,16 @@ it writes the enquiry to the browser console so you can confirm it works.
 | Estimated Budget | budget |
 | Project Details | message |
 
-The subject line reads "New website enquiry from" and then the sender name,
-and replying to the notification replies straight to the person who wrote in.
+The subject reads "New website enquiry from" and then the sender name, and
+replying to the notification replies straight to the person who wrote in.
 
 ### Notes
 
-- The free Formspree plan allows 50 submissions each month. The paid plans
-  raise that if the enquiries pick up.
-- `VITE_FORMSPREE_ID` is visible in the built JavaScript, which is normal and
-  safe. A form id is not a secret. Never put a private key in a `VITE_`
-  variable, because they all reach the browser.
-- If Formspree refuses a submission it explains why in its reply, and the form
-  shows that explanation rather than a status code.
+- If you set more than one service, `VITE_FORM_PROVIDER` decides which wins.
+  Its value is one of `formspree`, `web3forms`, or `custom`.
+- Values beginning with `VITE_` are visible in the built JavaScript, which is
+  normal and safe for a form id or a submission key. Never put a private key
+  or a password in one.
 - The form has a hidden field that real people never fill in. Anything that
   fills it is discarded silently, which stops most automated spam.
 
@@ -442,7 +479,7 @@ those packages only run at build time.
 - [ ] An invalid email address is rejected
 - [ ] A short project description is rejected
 - [ ] A valid submission shows the loading state, then the success state
-- [ ] The Formspree confirmation email has been clicked once
+- [ ] If using Formspree, the confirmation email has been clicked once
 - [ ] The thread completes its circle around the confirmation
 - [ ] A failed request shows the error state with a way to email you instead
 - [ ] The enquiry actually arrives in your inbox
