@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { gsap } from "@/lib/gsap";
-import { brand, navLinks, socialLinks } from "@/data/site";
+import { brand, navLinks, opensInNewTab, socialLinks } from "@/data/site";
 import { scrollToSection } from "@/lib/utils";
 import { useGsapEffect } from "@/hooks/useGsapEffect";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
@@ -71,8 +71,8 @@ export function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-                      rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                      target={opensInNewTab(link.href) ? "_blank" : undefined}
+                      rel={opensInNewTab(link.href) ? "noopener noreferrer" : undefined}
                       data-cursor="link"
                       data-cursor-label={link.label}
                       className="text-sm text-silver transition-colors duration-300 hover:text-bone"

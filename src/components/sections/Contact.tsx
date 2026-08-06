@@ -1,6 +1,13 @@
 import { useRef, useState, type FormEvent } from "react";
 import { gsap } from "@/lib/gsap";
-import { brand, budgetOptions, contactDetails, projectTypeOptions, socialLinks } from "@/data/site";
+import {
+  brand,
+  budgetOptions,
+  contactDetails,
+  opensInNewTab,
+  projectTypeOptions,
+  socialLinks,
+} from "@/data/site";
 import { cn, isValidEmail } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { useGsapEffect } from "@/hooks/useGsapEffect";
@@ -171,8 +178,8 @@ export function Contact() {
                 <li key={link.label} className="border-b border-line">
                   <a
                     href={link.href}
-                    target={link.href.startsWith("mailto:") ? undefined : "_blank"}
-                    rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                    target={opensInNewTab(link.href) ? "_blank" : undefined}
+                    rel={opensInNewTab(link.href) ? "noopener noreferrer" : undefined}
                     data-cursor="contact"
                     data-cursor-label={link.label}
                     className="group flex items-center justify-between gap-6 py-5 transition-colors duration-300"

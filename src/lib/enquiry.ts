@@ -1,11 +1,11 @@
 /**
  * Where contact enquiries are sent.
  *
- * WEB3FORMS IS THE ONE IN USE. Get an access key at https://web3forms.com by
- * entering your email address, then put it in a file named .env in the
- * project root, and in your host's environment variables:
+ * WEB3FORMS IS THE ONE IN USE, and the access key is already set below, so
+ * enquiries are delivered with nothing further to configure.
  *
- *   VITE_WEB3FORMS_KEY=your-access-key
+ * To point it at a different key without editing this file, set
+ * VITE_WEB3FORMS_KEY in your environment. It wins over the key below.
  *
  * The form itself does not know or care which service is behind it, so two
  * alternatives are kept ready in case you ever move:
@@ -31,8 +31,26 @@ export interface EnquiryPayload {
 
 export type ProviderName = "formspree" | "web3forms" | "custom" | "none";
 
+/**
+ * The Web3Forms access key for TechGrandHub.
+ *
+ * This is set here rather than only in an environment variable so the form
+ * works the moment the site is deployed, with nothing to configure.
+ *
+ * It is not a password. Web3Forms keys are submission keys, and every website
+ * using Web3Forms carries its key in the JavaScript the browser downloads, so
+ * this one is visible on the live site either way. All it can do is deliver a
+ * message to the address the key was registered with.
+ *
+ * If it ever starts attracting spam, request a fresh key at web3forms.com and
+ * either replace the line below or set VITE_WEB3FORMS_KEY, which wins over it.
+ */
+const DEFAULT_WEB3FORMS_KEY = "0976cc0e-6446-49d5-998d-27027edcead6";
+
 const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID ?? "";
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY ?? "";
+/** A key supplied by the environment, which takes precedence over the default. */
+const WEB3FORMS_KEY_FROM_ENV = import.meta.env.VITE_WEB3FORMS_KEY ?? "";
+const WEB3FORMS_KEY = WEB3FORMS_KEY_FROM_ENV || DEFAULT_WEB3FORMS_KEY;
 const CUSTOM_ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT ?? "";
 const FORCED = (import.meta.env.VITE_FORM_PROVIDER ?? "").trim().toLowerCase();
 
@@ -42,11 +60,15 @@ export function activeProvider(): ProviderName {
   if (FORCED === "web3forms" && WEB3FORMS_KEY) return "web3forms";
   if (FORCED === "custom" && CUSTOM_ENDPOINT) return "custom";
 
-  // Nothing forced, so take whichever one is configured.
-  if (WEB3FORMS_KEY) return "web3forms";
+  // Nothing forced, so take whichever one was configured deliberately. Only
+  // the environment counts here, otherwise the built in key below would always
+  // win and setting a different service would quietly do nothing.
+  if (WEB3FORMS_KEY_FROM_ENV) return "web3forms";
   if (FORMSPREE_ID) return "formspree";
   if (CUSTOM_ENDPOINT) return "custom";
-  return "none";
+
+  // Nothing configured, so fall back to the key that ships with the project.
+  return DEFAULT_WEB3FORMS_KEY ? "web3forms" : "none";
 }
 
 /** Fields shared by every service, named the way a person would read them. */

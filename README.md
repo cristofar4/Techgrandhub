@@ -213,10 +213,12 @@ touching a component.
   founding year.
 - `navLinks` controls the navigation. The `target` value must match the `id` of
   a section in `src/App.tsx`.
-- `contactDetails` holds your email address, your WhatsApp number, and your
-  GitHub and LinkedIn addresses. **Replace all four before launch.** The
-  WhatsApp number must be digits only, in full international format, with no
-  plus sign and no spaces.
+- `contactDetails` holds your email address, your phone number, and your
+  GitHub and LinkedIn addresses. The phone number is used for both the
+  WhatsApp link and the call link, and must be digits only in full
+  international format, with no plus sign and no spaces. A Nigerian number
+  written as 0903 696 1268 becomes 2349036961268: drop the leading zero, then
+  put 234 in front.
 - `socialLinks` is built from `contactDetails`, so changing the details there
   updates the contact section, the footer, and every link at once.
 - `projectTypeOptions` and `budgetOptions` fill the two menus in the form.
@@ -262,29 +264,14 @@ and the focus rings.
 
 ---
 
-## 6. Connecting the contact form
+## 6. The contact form
 
-Enquiries go through **Web3Forms**. The form validates, shows loading,
-success, and error states, and traps spam. Until a key is set it writes the
-enquiry to the browser console so you can confirm it works.
+**It is already connected.** Enquiries go through Web3Forms, and the access
+key ships with the project in `src/lib/enquiry.ts`, so the form delivers as
+soon as the site is deployed. There is nothing to configure and no
+confirmation step.
 
-### Switching it on, about a minute
-
-1. Go to https://web3forms.com and enter your email address. No account is
-   needed. The access key is emailed to you straight away.
-2. Create a file named `.env` in the project root:
-
-   ```
-   VITE_WEB3FORMS_KEY=your-access-key
-   ```
-
-3. Add the same name and value to your host, then redeploy, because the value
-   is read when the site is built.
-   - **Vercel**: Settings, then Environment Variables
-   - **Netlify**: Site configuration, then Environment variables
-4. Send yourself a test message from the live website.
-
-That is the whole setup. There is no confirmation step and no monthly limit.
+The form validates, shows loading, success, and error states, and traps spam.
 
 ### What arrives in your inbox
 
@@ -300,29 +287,40 @@ That is the whole setup. There is no confirmation step and no monthly limit.
 The subject reads "New website enquiry from" and then the sender name, and
 replying to the notification replies straight to the person who wrote in.
 
-### Notes
+### About the access key
 
-- The access key appears in the built JavaScript. That is normal and expected
-  for Web3Forms, which is why it is a submission key rather than a password.
-  Never put a private key or an account password in a `VITE_` variable,
-  because every one of them reaches the browser.
-- The form has a hidden field that real people never fill in. Anything that
-  fills it is discarded silently, which stops most automated spam.
-- If Web3Forms refuses a submission it explains why in its reply, and the form
-  shows that explanation rather than a status code.
+It sits in `src/lib/enquiry.ts` rather than hidden away, and that is correct
+for this service. A Web3Forms key is a submission key, not a password. Every
+website using Web3Forms carries its key in the JavaScript the browser
+downloads, so it is visible on the live site whichever way it is stored. All
+it can do is deliver a message to the address it was registered with.
+
+If it ever starts attracting spam, request a fresh key at web3forms.com, then
+either replace the line in `src/lib/enquiry.ts` or set `VITE_WEB3FORMS_KEY`,
+which wins over it.
+
+Never put a private key or an account password in a `VITE_` variable. Every
+one of them reaches the browser.
+
+### The spam trap
+
+The form carries a hidden field that real people never fill in. Anything that
+fills it is discarded silently, which stops most automated spam before it
+reaches your inbox.
 
 ### Moving to another service later
 
 The sending lives in `src/lib/enquiry.ts` and two alternatives are already
-built in. Set a different variable and the form follows, with no code change:
+built in. Set one of these and the form follows, with no code change:
 
 | Service | Variable |
 | --- | --- |
 | Formspree | `VITE_FORMSPREE_ID` |
 | Your own server | `VITE_FORM_ENDPOINT` |
 
-Set more than one and `VITE_FORM_PROVIDER` decides the winner. Its value is
-one of `web3forms`, `formspree`, or `custom`.
+Anything set in the environment wins over the key that ships with the project.
+Set more than one and `VITE_FORM_PROVIDER` decides, with a value of
+`web3forms`, `formspree`, or `custom`.
 
 Formspree has one extra step worth knowing about: the first submission
 triggers a confirmation email, and the link in it has to be clicked once
@@ -413,8 +411,10 @@ those packages only run at build time.
 ### Content
 
 - [ ] Every contact detail in `src/data/site.ts` is yours
-- [ ] WhatsApp number is digits only, in full international format
+- [ ] The WhatsApp link opens a chat with the right number
+- [ ] The phone link starts a call on a mobile
 - [ ] GitHub and LinkedIn addresses open your real profiles
+- [ ] The email address shown is one you actually read
 - [ ] Every project has a working live address
 - [ ] Project screenshots have been captured with `npm run capture`
 - [ ] Project descriptions read the way you would describe the work
@@ -457,7 +457,7 @@ those packages only run at build time.
 - [ ] An invalid email address is rejected
 - [ ] A short project description is rejected
 - [ ] A valid submission shows the loading state, then the success state
-- [ ] The Web3Forms access key is set on the host, and the site redeployed
+- [ ] A test enquiry actually arrived in your inbox
 - [ ] The thread completes its circle around the confirmation
 - [ ] A failed request shows the error state with a way to email you instead
 - [ ] The enquiry actually arrives in your inbox

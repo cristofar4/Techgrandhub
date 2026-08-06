@@ -34,10 +34,14 @@ export const navLinks: NavLink[] = [
  */
 export const contactDetails = {
   email: "hello@techgrandhub.com",
-  /** Digits only, in full international format, no plus sign and no spaces. */
-  whatsappNumber: "2348000000000",
+  /**
+   * Digits only, in full international format, no plus sign and no spaces.
+   * A Nigerian number written as 0903 696 1268 becomes 2349036961268:
+   * drop the leading zero, then put the country code 234 in front.
+   */
+  whatsappNumber: "2349036961268",
   /** Human readable version of the same number. */
-  whatsappDisplay: "+234 800 000 0000",
+  whatsappDisplay: "+234 903 696 1268",
   whatsappMessage: "Hello TechGrandHub, I would like to discuss a website project.",
   github: "https://github.com/techgrandhub",
   linkedin: "https://www.linkedin.com/in/techgrandhub",
@@ -53,9 +57,22 @@ export const socialLinks: SocialLink[] = [
     )}`,
     handle: contactDetails.whatsappDisplay,
   },
+  {
+    label: "Phone",
+    href: `tel:+${contactDetails.whatsappNumber}`,
+    handle: contactDetails.whatsappDisplay,
+  },
   { label: "GitHub", href: contactDetails.github, handle: "techgrandhub" },
   { label: "LinkedIn", href: contactDetails.linkedin, handle: "techgrandhub" },
 ];
+
+/**
+ * True for addresses that should open in a new tab.
+ * Mailto and tel links hand over to another application, so they stay put.
+ */
+export function opensInNewTab(href: string): boolean {
+  return href.startsWith("http");
+}
 
 /** Options offered inside the contact form. */
 export const projectTypeOptions: ProjectTypeOption[] = [
