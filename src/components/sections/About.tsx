@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { gsap } from "@/lib/gsap";
-import { aboutDetail, aboutPortrait } from "@/data/images";
+import { aboutPortrait } from "@/data/images";
 import { stats, strengths } from "@/data/stats";
 import { brand } from "@/data/site";
 import { useGsapEffect } from "@/hooks/useGsapEffect";
@@ -126,32 +126,34 @@ export function About() {
             </div>
           </div>
 
-          {/* ---------------- Portraits ---------------- */}
-          <div className="relative">
+          {/* ---------------- Portrait ---------------- */}
+          <figure className="relative">
             <div data-about-parallax className="relative">
               <Figure
                 asset={aboutPortrait}
-                sizes="(max-width: 1024px) 90vw, 38vw"
+                sizes="(max-width: 1024px) 90vw, 40vw"
+                fallbackLabel="Portrait"
                 className="rounded-2xl border border-line"
               />
-              <span aria-hidden="true" className="absolute -left-3 -top-3 h-16 w-16 border-l border-t border-cobalt/50" />
-            </div>
-
-            <div
-              data-about-parallax
-              className="relative -mt-16 ms-auto w-2/3 sm:-mt-24 lg:-mt-20 lg:w-3/5"
-            >
-              <Figure
-                asset={aboutDetail}
-                sizes="(max-width: 1024px) 60vw, 24vw"
-                className="rounded-2xl border border-line shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)]"
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -left-3 -top-3 h-16 w-16 border-l border-t border-cobalt/50"
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -bottom-3 -right-3 h-16 w-16 border-b border-r border-cobalt/50"
               />
             </div>
 
-            <p className="mt-8 border-s border-line ps-5 font-editorial text-lg italic text-silver">
-              {brand.location}. Building on the web since {brand.foundedYear}.
-            </p>
-          </div>
+            <figcaption className="mt-8 border-s border-line ps-5">
+              <p className="font-editorial text-lg italic text-bone">
+                The person you will actually be working with.
+              </p>
+              <p className="mt-2 text-sm text-silver">
+                {brand.location}. Building on the web since {brand.foundedYear}.
+              </p>
+            </figcaption>
+          </figure>
         </div>
 
         {/* ---------------- Statistics ---------------- */}

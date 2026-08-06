@@ -71,18 +71,18 @@ export const heroLens: ImageAsset = {
    About
    -------------------------------------------------------------------------- */
 
+/**
+ * A real photograph of the developer, stored in public/images.
+ * It is marked localOnly, so it never falls back to a stock photo service.
+ * To change it, replace public/images/about-portrait.jpg and update the alt
+ * text below to describe the new picture.
+ */
 export const aboutPortrait: ImageAsset = {
-  id: "photo-1507003211169-0a1dd7228f2d",
+  id: "",
   local: "about-portrait.jpg",
-  alt: "Professional portrait of the developer behind TechGrandHub",
+  alt: "The developer behind TechGrandHub, photographed outdoors against a bright sky",
   ratio: 4 / 5,
-};
-
-export const aboutDetail: ImageAsset = {
-  id: "photo-1461749280684-dccba630e2f6",
-  local: "about-detail.jpg",
-  alt: "A close view of a monitor showing structured frontend code",
-  ratio: 3 / 2,
+  localOnly: true,
 };
 
 /* --------------------------------------------------------------------------
@@ -183,7 +183,6 @@ export const allImageAssets: ImageAsset[] = [
   heroPrimary,
   heroLens,
   aboutPortrait,
-  aboutDetail,
   ...Object.values(serviceImages),
   ...Object.values(projectImages),
   ...Object.values(testimonialImages),

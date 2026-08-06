@@ -56,11 +56,12 @@ Use the same short id in all three, then run `npm run capture` again.
 
 ## Part two: replacing the people and places with Nigerian photography
 
-The remaining seven pictures currently load from Unsplash. Replacing them with
+Your own portrait is already in place in the About section. The remaining five
+pictures still load from Unsplash. Replacing them with
 Nigerian photography is a much stronger fit for the brand, and it takes about
 ten minutes.
 
-### Step one, download seven pictures
+### Step one, download five pictures
 
 These searches return free Nigerian and West African photography. Pick one
 picture for each row, and save it with the exact file name given.
@@ -69,21 +70,21 @@ picture for each row, and save it with the exact file name given.
 | --- | --- | --- |
 | `hero-primary.jpg` | A developer at work, or a modern workspace | https://unsplash.com/s/photos/nigerian-developer |
 | `hero-lens.jpg` | A website or dashboard on a screen, matching the hero crop | https://unsplash.com/s/photos/website-design-screen |
-| `about-portrait.jpg` | Your own portrait, or a Nigerian professional portrait | https://unsplash.com/s/photos/nigerian-man-portrait |
-| `about-detail.jpg` | Code on a screen, or a working desk | https://unsplash.com/s/photos/code-screen |
 | `client-one.jpg` | A Nigerian business owner, portrait | https://unsplash.com/s/photos/nigerian-woman-professional |
 | `client-two.jpg` | A Nigerian company director, portrait | https://unsplash.com/s/photos/nigerian-businessman |
 | `client-three.jpg` | A Nigerian school administrator, portrait | https://unsplash.com/s/photos/african-professional-woman |
 
+`about-portrait.jpg` is not in that list, because it is already your own
+photograph. It sits in this folder and always loads from here.
+
 Pexels has good Nigerian photography too: https://www.pexels.com/search/nigeria/
 
-The strongest choice of all for `about-portrait.jpg` is a real photograph of
-you. A portfolio with the real person on it is trusted more than one with a
-stock portrait, every time.
+The same reasoning applies to the hero. A real photograph of you at work beats
+any stock picture, so if you have one, save it as `hero-primary.jpg`.
 
 ### Step two, save them here
 
-Put all seven files directly into this folder, `public/images/`.
+Put all five files directly into this folder, `public/images/`.
 
 ### Step three, switch them on
 
@@ -107,8 +108,7 @@ and search engines get the truth. Once you have swapped a picture, update its
 | Use | Longest edge | Format | Quality |
 | --- | --- | --- | --- |
 | Hero | 1600 px | JPG or WebP | 72 to 80 |
-| About | 1200 px | JPG or WebP | 72 |
-| Portraits | 900 px | JPG or WebP | 75 |
+| Portraits | 1000 px | JPG or WebP | 80 |
 | Social sharing image | 1200 x 630 px | JPG | 80 |
 
 Keep every file under 300 KB. Anything larger slows the first view down.

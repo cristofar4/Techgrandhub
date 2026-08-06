@@ -13,13 +13,14 @@ import { SelectField, TextAreaField, TextField } from "@/components/ui/Field";
 /* ==========================================================================
    WHERE ENQUIRIES GO
    --------------------------------------------------------------------------
-   The sending itself lives in src/lib/enquiry.ts, which supports Formspree,
-   Web3Forms, and your own server. Pick one by setting a single environment
-   variable, no code change needed:
+   Enquiries go through Web3Forms. Get an access key at https://web3forms.com
+   by entering your email address, then set it in .env and in your host's
+   environment variables:
 
-     Formspree        VITE_FORMSPREE_ID=abcdwxyz
-     Web3Forms        VITE_WEB3FORMS_KEY=your-access-key
-     Your own server  VITE_FORM_ENDPOINT=https://api.yourdomain.com/enquiries
+     VITE_WEB3FORMS_KEY=your-access-key
+
+   The sending itself lives in src/lib/enquiry.ts, which also supports
+   Formspree and your own server should you ever move.
 
    Set none of them and the form still validates, still shows every state, and
    writes the enquiry to the browser console so you can check it works.

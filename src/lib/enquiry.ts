@@ -1,12 +1,16 @@
 /**
  * Where contact enquiries are sent.
  *
- * The form itself does not know or care which service is behind it. Set one
- * environment variable and the right service is used, so switching provider
- * never means editing a component.
+ * WEB3FORMS IS THE ONE IN USE. Get an access key at https://web3forms.com by
+ * entering your email address, then put it in a file named .env in the
+ * project root, and in your host's environment variables:
+ *
+ *   VITE_WEB3FORMS_KEY=your-access-key
+ *
+ * The form itself does not know or care which service is behind it, so two
+ * alternatives are kept ready in case you ever move:
  *
  *   Formspree        VITE_FORMSPREE_ID=abcdwxyz
- *   Web3Forms        VITE_WEB3FORMS_KEY=your-access-key
  *   Your own server  VITE_FORM_ENDPOINT=https://api.yourdomain.com/enquiries
  *
  * Set none of them and the form still validates, still shows every state, and
