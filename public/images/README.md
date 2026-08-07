@@ -56,12 +56,12 @@ Use the same short id in all three, then run `npm run capture` again.
 
 ## Part two: replacing the people and places with Nigerian photography
 
-Your own portrait is already in place in the About section. The remaining five
-pictures still load from Unsplash. Replacing them with
+Your own portrait is already in place in the About section. Two pictures still
+load from Unsplash, both in the hero. Replacing them with
 Nigerian photography is a much stronger fit for the brand, and it takes about
 ten minutes.
 
-### Step one, download five pictures
+### Step one, download two pictures
 
 These searches return free Nigerian and West African photography. Pick one
 picture for each row, and save it with the exact file name given.
@@ -70,12 +70,15 @@ picture for each row, and save it with the exact file name given.
 | --- | --- | --- |
 | `hero-primary.jpg` | A developer at work, or a modern workspace | https://unsplash.com/s/photos/nigerian-developer |
 | `hero-lens.jpg` | A website or dashboard on a screen, matching the hero crop | https://unsplash.com/s/photos/website-design-screen |
-| `client-one.jpg` | A Nigerian business owner, portrait | https://unsplash.com/s/photos/nigerian-woman-professional |
-| `client-two.jpg` | A Nigerian company director, portrait | https://unsplash.com/s/photos/nigerian-businessman |
-| `client-three.jpg` | A Nigerian school administrator, portrait | https://unsplash.com/s/photos/african-professional-woman |
 
 `about-portrait.jpg` is not in that list, because it is already your own
 photograph. It sits in this folder and always loads from here.
+
+There are no client portraits to download either. The testimonials show each
+client's initials instead of a face, because a stock photograph of a stranger
+beside a quote they never gave is a false endorsement, not a placeholder. When
+you have a real client, a real quote, and their permission to use their
+picture, see the note at the end of this page.
 
 Pexels has good Nigerian photography too: https://www.pexels.com/search/nigeria/
 
@@ -84,7 +87,7 @@ any stock picture, so if you have one, save it as `hero-primary.jpg`.
 
 ### Step two, save them here
 
-Put all five files directly into this folder, `public/images/`.
+Put both files directly into this folder, `public/images/`.
 
 ### Step three, switch them on
 
@@ -127,3 +130,39 @@ should carry your own branding.
 
 Until you add them the website still works. Only the sharing preview and the
 saved icon are affected.
+
+---
+
+## Adding a real client photograph
+
+The testimonials show initials rather than faces. That is deliberate: while
+the quotes are placeholders, attaching a stranger's photograph to them would
+present a false endorsement.
+
+Once a testimonial is real, and the client has agreed to their picture being
+published on your website, add it in two steps.
+
+1. Save their photograph here as, for example, `client-amara.jpg`, cropped
+   square at about 400 by 400 pixels.
+2. In `src/data/images.ts`, add the asset:
+
+   ```ts
+   export const clientAmara: ImageAsset = {
+     id: "",
+     local: "client-amara.jpg",
+     alt: "Amara Okoye, owner of Atelier Nova",
+     ratio: 1,
+     localOnly: true,
+   };
+   ```
+
+3. In `src/data/testimonials.ts`, attach it to their entry:
+
+   ```ts
+   image: clientAmara,
+   ```
+
+The photograph replaces the initials in that testimonial straight away.
+Everything else, including the layout and the transitions, stays as it is.
+
+Always ask before publishing someone's face, and keep a record of the answer.

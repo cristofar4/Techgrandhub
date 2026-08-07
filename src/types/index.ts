@@ -91,7 +91,12 @@ export interface Testimonial {
   name: string;
   business: string;
   projectType: string;
-  image: ImageAsset;
+  /**
+   * A photograph of the client, used only when you have a real one and their
+   * permission to publish it. Leave it out and their initials are shown
+   * instead, which is the honest presentation until then.
+   */
+  image?: ImageAsset;
 }
 
 export interface ProjectTypeOption {

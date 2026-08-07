@@ -153,31 +153,6 @@ export const projectImages: Record<string, ImageAsset> = {
   duryplaza: screenshot("duryplaza", "The Dury Plaza Hotel website shown in a browser"),
 };
 
-/* --------------------------------------------------------------------------
-   Testimonials
-   -------------------------------------------------------------------------- */
-
-export const testimonialImages: Record<string, ImageAsset> = {
-  one: {
-    id: "photo-1494790108377-be9c29b29330",
-    local: "client-one.jpg",
-    alt: "Portrait of a business owner smiling in a bright interior",
-    ratio: 1,
-  },
-  two: {
-    id: "photo-1472099645785-5658abf4ff4e",
-    local: "client-two.jpg",
-    alt: "Portrait of a company director in a dark jacket",
-    ratio: 1,
-  },
-  three: {
-    id: "photo-1573496359142-b8d87734a5a2",
-    local: "client-three.jpg",
-    alt: "Portrait of a school administrator standing in an office",
-    ratio: 1,
-  },
-};
-
 /** Every asset in one list, used by the download guide and by preloading. */
 export const allImageAssets: ImageAsset[] = [
   heroPrimary,
@@ -185,5 +160,4 @@ export const allImageAssets: ImageAsset[] = [
   aboutPortrait,
   ...Object.values(serviceImages),
   ...Object.values(projectImages),
-  ...Object.values(testimonialImages),
 ];

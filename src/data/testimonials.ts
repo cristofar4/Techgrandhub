@@ -1,10 +1,17 @@
 import type { Testimonial } from "@/types";
-import { testimonialImages } from "@/data/images";
 
 /**
- * Placeholder testimonials.
- * Replace the quotes, names, and businesses with real client feedback before
- * the website goes live.
+ * PLACEHOLDER TESTIMONIALS. THESE PEOPLE DO NOT EXIST.
+ *
+ * Replace every one of them with real feedback from real clients before the
+ * website goes live. Quoting invented people is the fastest way to lose the
+ * trust the rest of the website is working to build.
+ *
+ * There is deliberately no photograph attached. Putting a stranger's face
+ * beside a quote they never said turns a placeholder into a false endorsement,
+ * so the layout shows initials instead. Once you have a real client, a real
+ * quote, and their permission to use their picture, add an `image` to their
+ * entry and it appears automatically.
  */
 export const testimonials: Testimonial[] = [
   {
@@ -14,7 +21,6 @@ export const testimonials: Testimonial[] = [
     name: "Amara Okoye",
     business: "Atelier Nova",
     projectType: "Fashion Website",
-    image: testimonialImages.one,
   },
   {
     id: "two",
@@ -23,7 +29,6 @@ export const testimonials: Testimonial[] = [
     name: "Daniel Mensah",
     business: "Ledger Partners",
     projectType: "Business Landing Page",
-    image: testimonialImages.two,
   },
   {
     id: "three",
@@ -32,6 +37,5 @@ export const testimonials: Testimonial[] = [
     name: "Grace Adeyemi",
     business: "Northgate Academy",
     projectType: "School Website",
-    image: testimonialImages.three,
   },
 ];

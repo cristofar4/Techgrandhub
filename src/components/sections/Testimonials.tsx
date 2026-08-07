@@ -1,24 +1,38 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { testimonials } from "@/data/testimonials";
-import { imageSrc, imageSrcSet } from "@/data/images";
+import { imageSrc } from "@/data/images";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { THREAD_ORDER, useThreadAnchor } from "@/components/thread/ThreadContext";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
+/** First letters of each part of a name, for example Amara Okoye becomes AO. */
+function initialsOf(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 /**
  * Testimonials.
  *
  * A controlled story rather than a carousel that moves on its own. The visitor
- * decides when to advance. The outgoing quote is masked away, the portrait
- * slides behind it, and the next quote rises into the same frame.
+ * decides when to advance, the outgoing quote is masked away, and the next one
+ * rises into the same frame.
+ *
+ * The words carry the section. A client is shown by their initials unless a
+ * real photograph of them has been added, which keeps the layout honest while
+ * the quotes are still placeholders.
  */
 export function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const quoteRef = useRef<HTMLQuoteElement>(null);
   const metaRef = useRef<HTMLDivElement>(null);
-  const portraitRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<HTMLDivElement>(null);
   const animating = useRef(false);
   const mounted = useRef(false);
 
@@ -44,13 +58,13 @@ export function Testimonials() {
     gsap
       .timeline({ onComplete: () => setIndex(target) })
       .to([quoteRef.current, metaRef.current], {
-        yPercent: -14 * direction,
+        yPercent: -12 * direction,
         opacity: 0,
         duration: 0.42,
         ease: "power2.in",
         stagger: 0.05,
       })
-      .to(portraitRef.current, { scale: 1.06, opacity: 0.35, duration: 0.42, ease: "power2.in" }, 0);
+      .to(markRef.current, { scale: 0.86, opacity: 0, duration: 0.36, ease: "power2.in" }, 0);
   };
 
   /* Bring the new content in once React has swapped it. */
@@ -65,25 +79,24 @@ export function Testimonials() {
       .timeline({ onComplete: () => (animating.current = false) })
       .fromTo(
         [quoteRef.current, metaRef.current],
-        { yPercent: 16, opacity: 0 },
+        { yPercent: 14, opacity: 0 },
         { yPercent: 0, opacity: 1, duration: 0.65, ease: "power3.out", stagger: 0.07 },
       )
       .fromTo(
-        portraitRef.current,
-        { scale: 1.08, opacity: 0.35, clipPath: "inset(0% 0% 100% 0%)" },
-        {
-          scale: 1,
-          opacity: 1,
-          clipPath: "inset(0% 0% 0% 0%)",
-          duration: 0.8,
-          ease: "power3.out",
-        },
-        0,
+        markRef.current,
+        { scale: 0.86, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" },
+        0.05,
       );
   }, [index, reducedMotion]);
 
   return (
-    <section ref={sectionRef} id="testimonials" aria-labelledby="testimonials-title" className="section-space relative">
+    <section
+      ref={sectionRef}
+      id="testimonials"
+      aria-labelledby="testimonials-title"
+      className="section-space relative"
+    >
       <div className="shell relative z-10">
         <SectionHeading
           eyebrow="Client words"
@@ -93,45 +106,9 @@ export function Testimonials() {
           titleAccent="afterwards."
         />
 
-        <div
-          className="mt-16 grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16"
-          aria-roledescription="Testimonial viewer"
-        >
-          {/* ---------------- Portrait ---------------- */}
-          <div className="relative order-2 lg:order-1">
-            <div
-              ref={portraitRef}
-              className="relative aspect-4/5 w-full max-w-sm overflow-hidden rounded-2xl border border-line"
-            >
-              {testimonials.map((testimonial, position) => (
-                <img
-                  key={testimonial.id}
-                  src={imageSrc(testimonial.image, 768)}
-                  srcSet={imageSrcSet(testimonial.image)}
-                  sizes="(max-width: 1024px) 70vw, 30vw"
-                  alt={testimonial.image.alt}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(event) => {
-                    event.currentTarget.style.visibility = "hidden";
-                  }}
-                  className={cn(
-                    "absolute inset-0 h-full w-full object-cover transition-opacity duration-500",
-                    position === index ? "opacity-100" : "opacity-0",
-                  )}
-                />
-              ))}
-              <span aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-ink/70 to-transparent" />
-            </div>
-
-            <span
-              aria-hidden="true"
-              className="absolute -right-3 -top-3 h-16 w-16 border-r border-t border-cobalt/50"
-            />
-          </div>
-
-          {/* ---------------- Quote ---------------- */}
-          <div ref={threadRef} className="order-1 lg:order-2">
+        <div ref={threadRef} className="mt-16">
+          {/* ---------------- The quote ---------------- */}
+          <div className="border-s-2 border-cobalt/60 ps-6 md:ps-10">
             <svg
               aria-hidden="true"
               viewBox="0 0 34 24"
@@ -142,56 +119,84 @@ export function Testimonials() {
             </svg>
 
             <blockquote ref={quoteRef} className="mt-6">
-              <p className="display-md font-editorial leading-[1.22] text-bone">{current.quote}</p>
+              <p className="max-w-4xl font-editorial text-2xl leading-[1.3] text-bone md:text-4xl md:leading-[1.25]">
+                {current.quote}
+              </p>
             </blockquote>
 
-            <div ref={metaRef} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            {/* ---------------- Who said it ---------------- */}
+            <div ref={metaRef} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-5">
+              <div
+                ref={markRef}
+                className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line-strong bg-ink-raised"
+              >
+                {current.image ? (
+                  <img
+                    src={imageSrc(current.image, 240)}
+                    alt={current.image.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="font-mono text-sm tracking-[0.08em] text-cobalt-soft"
+                  >
+                    {initialsOf(current.name)}
+                  </span>
+                )}
+              </div>
+
               <div>
                 <p className="text-base text-bone">{current.name}</p>
                 <p className="mt-1 text-sm text-silver">{current.business}</p>
               </div>
+
               <span aria-hidden="true" className="hidden h-8 w-px bg-line sm:block" />
+
               <p className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-cobalt-soft">
                 {current.projectType}
               </p>
             </div>
+          </div>
 
-            {/* ---------------- Controls ---------------- */}
-            <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border-t border-line pt-8">
-              <div className="flex items-center gap-3">
-                <ControlButton label="Previous testimonial" onClick={() => goTo(index - 1)}>
-                  <path d="M10 3L5 8l5 5" />
-                </ControlButton>
-                <ControlButton label="Next testimonial" onClick={() => goTo(index + 1)}>
-                  <path d="M6 3l5 5-5 5" />
-                </ControlButton>
-                <span className="ms-2 font-mono text-xs text-silver">
-                  {String(index + 1).padStart(2, "0")} of {String(testimonials.length).padStart(2, "0")}
-                </span>
-              </div>
-
-              <ul className="flex flex-wrap items-center gap-2">
-                {testimonials.map((testimonial, position) => (
-                  <li key={testimonial.id}>
-                    <button
-                      type="button"
-                      onClick={() => goTo(position)}
-                      aria-current={position === index ? "true" : undefined}
-                      aria-label={`Show the testimonial from ${testimonial.name}`}
-                      data-cursor="explore"
-                      className={cn(
-                        "rounded-full border px-3.5 py-1.5 text-xs transition-colors duration-300",
-                        position === index
-                          ? "border-cobalt bg-cobalt/12 text-bone"
-                          : "border-line text-silver hover:border-line-strong hover:text-bone",
-                      )}
-                    >
-                      {testimonial.business}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+          {/* ---------------- Controls ---------------- */}
+          <div className="mt-14 flex flex-wrap items-center justify-between gap-6 border-t border-line pt-8">
+            <div className="flex items-center gap-3">
+              <ControlButton label="Previous testimonial" onClick={() => goTo(index - 1)}>
+                <path d="M10 3L5 8l5 5" />
+              </ControlButton>
+              <ControlButton label="Next testimonial" onClick={() => goTo(index + 1)}>
+                <path d="M6 3l5 5-5 5" />
+              </ControlButton>
+              <span className="ms-2 font-mono text-xs text-silver">
+                {String(index + 1).padStart(2, "0")} of{" "}
+                {String(testimonials.length).padStart(2, "0")}
+              </span>
             </div>
+
+            <ul className="flex flex-wrap items-center gap-2">
+              {testimonials.map((testimonial, position) => (
+                <li key={testimonial.id}>
+                  <button
+                    type="button"
+                    onClick={() => goTo(position)}
+                    aria-current={position === index ? "true" : undefined}
+                    aria-label={`Show the testimonial from ${testimonial.name}`}
+                    data-cursor="explore"
+                    className={cn(
+                      "rounded-full border px-3.5 py-1.5 text-xs transition-colors duration-300",
+                      position === index
+                        ? "border-cobalt bg-cobalt/12 text-bone"
+                        : "border-line text-silver hover:border-line-strong hover:text-bone",
+                    )}
+                  >
+                    {testimonial.business}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
@@ -218,7 +223,15 @@ function ControlButton({
       data-cursor="explore"
       className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line text-bone transition-colors duration-300 hover:border-cobalt-soft hover:text-white"
     >
-      <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        viewBox="0 0 16 16"
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         {children}
       </svg>
     </button>
