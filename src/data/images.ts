@@ -153,6 +153,36 @@ export const projectImages: Record<string, ImageAsset> = {
   duryplaza: screenshot("duryplaza", "The Dury Plaza Hotel website shown in a browser"),
 };
 
+/* --------------------------------------------------------------------------
+   Client logos
+   -------------------------------------------------------------------------- */
+
+/**
+ * A client logo, stored in public/images/clients.
+ *
+ * Logos are always loaded from your own files, never from a photo service.
+ * Drop the artwork into public/images/clients, add an entry here, then attach
+ * it to the matching testimonial in src/data/testimonials.ts.
+ *
+ * @param file Name of the file inside public/images/clients
+ * @param alt  Describes the logo, for example "Forge logo"
+ */
+export function clientLogo(file: string, alt: string, ratio = 3): ImageAsset {
+  return { id: "", local: `clients/${file}`, alt, ratio, localOnly: true };
+}
+
+/**
+ * Add your client logos here, for example:
+ *
+ *   export const clientLogos = {
+ *     forge: clientLogo("forge.svg", "Forge logo"),
+ *   };
+ *
+ * Then in src/data/testimonials.ts set `logo: clientLogos.forge` on the
+ * matching entry. Until a logo is attached, the client's initials are shown.
+ */
+export const clientLogos: Record<string, ImageAsset> = {};
+
 /** Every asset in one list, used by the download guide and by preloading. */
 export const allImageAssets: ImageAsset[] = [
   heroPrimary,

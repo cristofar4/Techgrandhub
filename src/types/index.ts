@@ -92,9 +92,19 @@ export interface Testimonial {
   business: string;
   projectType: string;
   /**
-   * A photograph of the client, used only when you have a real one and their
-   * permission to publish it. Leave it out and their initials are shown
-   * instead, which is the honest presentation until then.
+   * The client's logo, shown beside their words. This is the preferred mark,
+   * because a logo identifies the business without making any claim about a
+   * person's face.
+   */
+  logo?: ImageAsset;
+  /**
+   * Set this when the logo is dark artwork meant for a light background. It
+   * is redrawn in white so it stays readable on the dark canvas.
+   */
+  logoInvert?: boolean;
+  /**
+   * A photograph of the client. Only use one when it is a real client and they
+   * have given permission for their picture to be published.
    */
   image?: ImageAsset;
 }

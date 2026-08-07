@@ -126,26 +126,8 @@ export function Testimonials() {
 
             {/* ---------------- Who said it ---------------- */}
             <div ref={metaRef} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-5">
-              <div
-                ref={markRef}
-                className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line-strong bg-ink-raised"
-              >
-                {current.image ? (
-                  <img
-                    src={imageSrc(current.image, 240)}
-                    alt={current.image.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span
-                    aria-hidden="true"
-                    className="font-mono text-sm tracking-[0.08em] text-cobalt-soft"
-                  >
-                    {initialsOf(current.name)}
-                  </span>
-                )}
+              <div ref={markRef} className="shrink-0">
+                <ClientMark testimonial={current} />
               </div>
 
               <div>
@@ -201,6 +183,57 @@ export function Testimonials() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The mark beside a quote.
+ *
+ * A logo where there is one, a photograph where a real client has agreed to
+ * it, and the client's initials where there is neither. The three sit in
+ * containers of the same height, so the row never jumps as they change.
+ */
+function ClientMark({ testimonial }: { testimonial: (typeof testimonials)[number] }) {
+  if (testimonial.logo) {
+    return (
+      <span className="flex h-14 items-center justify-center rounded-xl border border-line bg-bone/6 px-5">
+        <img
+          src={imageSrc(testimonial.logo, 320)}
+          alt={testimonial.logo.alt}
+          loading="lazy"
+          decoding="async"
+          className={cn(
+            "max-h-8 w-auto max-w-36 object-contain",
+            // Dark artwork would vanish on this canvas, so it is redrawn white.
+            testimonial.logoInvert && "brightness-0 invert",
+          )}
+        />
+      </span>
+    );
+  }
+
+  if (testimonial.image) {
+    return (
+      <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-line-strong bg-ink-raised">
+        <img
+          src={imageSrc(testimonial.image, 240)}
+          alt={testimonial.image.alt}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
+      </span>
+    );
+  }
+
+  return (
+    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-line-strong bg-ink-raised">
+      <span aria-hidden="true" className="font-mono text-sm tracking-[0.08em] text-cobalt-soft">
+        {initialsOf(testimonial.name)}
+      </span>
+    </span>
   );
 }
 

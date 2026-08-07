@@ -7,11 +7,13 @@ import type { Testimonial } from "@/types";
  * website goes live. Quoting invented people is the fastest way to lose the
  * trust the rest of the website is working to build.
  *
- * There is deliberately no photograph attached. Putting a stranger's face
- * beside a quote they never said turns a placeholder into a false endorsement,
- * so the layout shows initials instead. Once you have a real client, a real
- * quote, and their permission to use their picture, add an `image` to their
- * entry and it appears automatically.
+ * Each entry can carry the client's logo, which is the mark this section is
+ * built around. Drop the artwork into public/images/clients, register it in
+ * src/data/images.ts, then set `logo` on the entry here. Full instructions are
+ * in public/images/clients/README.md.
+ *
+ * Until a logo is attached the client's initials are shown, which reads as a
+ * deliberate choice rather than a gap.
  */
 export const testimonials: Testimonial[] = [
   {
